@@ -116,10 +116,13 @@ void T1Interrupt(void) interrupt ISRTimer1
 		i++;
    	if(i<10)														//每100us取一次值，比较高低电平的数量
    	{
-   		if((P0&0x10)==0X10)											//取值
+   		if((P0&0x10)==0X10)	
+		{	_nop_();
+		    if((P0&0x10)==0X10)											//取值
    			PinH++;
+		}
    		else
-   			PinL=PinL+1;
+   			PinL++;
    		
    	}
    	else
@@ -170,16 +173,22 @@ void T0Interrupt(void) interrupt ISRTimer0
 
 
     if((P0&0X10)!=ZeroOld)											//抓取p04下降沿
-	{  delaytime=1;
- 	    if((P0&0X10)==0)                 							//若有则接收到红外信号，取下降沿作为触发
-    	{
+	{  	_nop_(); _nop_(); 
+		 if((P0&0X10)!=ZeroOld)											//抓取p04下降沿
+		{
+			 
+
+			delaytime=1;
+ 	 	   if((P0&0X10)==0)                 							//若有则接收到红外信号，取下降沿作为触发
+    		{
      		
-    		TR1=1;													//若抓到下降沿，则打开t1定时器获取数据
-    		DataF++;
+    			TR1=1;													//若抓到下降沿，则打开t1定时器获取数据
+   		 		DataF++;
     					
-  		}
-		DataError=0;        												
-	    ZeroOld=(P0&0x10);    
+  			}
+			DataError=0;        												
+		    ZeroOld=(P0&0x10);  
+		}  
 	  }
 	else if(delaytime==1)
      	DataError++;	 
@@ -227,10 +236,13 @@ void T0Interrupt(void) interrupt ISRTimer0
 		}
 		if((P2&0X01)!=P07Old)											//抓取过零信号
 		{  
- 		    P07Flag=1;
-//			P05=~P05;
-		    P07Old=(P2&0x01);
-	    
+			_nop_(); _nop_();
+			if((P2&0X01)!=P07Old)											//抓取过零信号
+			{  
+ 		 	   P07Flag=1;
+//				P05=~P05;
+			    P07Old=(P2&0x01);
+	    	}
 		}
 		if(P07Flag==1)													//当有过零时 计数加一
 		{   

@@ -1,1 +1,0 @@
-"main.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(..\user\sys;C:\Keil_v5\C51\INC;C:\Keil_v5\C51\INC\SONIX;C:\Keil_v5\C51\INC;C:\Keil_v5\C51\INC) DEBUG OBJECTEXTEND PRINT(..\output\main.lst) TABS (2) OBJECT(..\output\main.obj)
