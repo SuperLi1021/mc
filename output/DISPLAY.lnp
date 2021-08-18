@@ -1,0 +1,6 @@
+"..\output\OPTIONS_SN8F5702.obj",
+"..\output\main.obj",
+"..\output\display.obj",
+"..\output\sys.obj" 
+TO "..\output\DISPLAY" 
+PRINT("..\output\DISPLAY.m51") RAMSIZE(256) 

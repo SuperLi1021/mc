@@ -1,0 +1,1 @@
+"main.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(..\user\sys) DEBUG OBJECTEXTEND PRINT(..\output\main.lst) TABS (2) OBJECT(..\output\main.obj)
