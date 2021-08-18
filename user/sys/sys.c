@@ -14,7 +14,7 @@ bit PinFlag;
 
 /********************************定义全局字节变量*********************/
 extern unsigned int PinT;
-extern unsigned char Level,PinBit,SWFlag;
+extern unsigned char Level,PinBit,SWFlag,HWFlag,sw;
 
 /*********************************************************************
 * 函 数 名： InitT0T1
@@ -160,7 +160,7 @@ void T0Interrupt(void) interrupt ISRTimer0
     static	unsigned int PinData,DataError,PinOld,HWTimes,PinT1;
     static	unsigned char DataF,TIME,P07Old,P07Time,ZeroOld;
     /********************************定义位变量*************************/
-    static  bit P07Flag,HWFlag;
+    static  bit P07Flag,delaytime;
     TIME++;
     if(TIME>=100)
     {TIME=0;
@@ -170,7 +170,7 @@ void T0Interrupt(void) interrupt ISRTimer0
 
 
     if((P0&0X10)!=ZeroOld)							//抓取p04下降沿
-		{  
+		{  delaytime=1;
  	     if((P0&0X10)==0)                  //若有则接收到红外信号，取下降沿作为触发
     	{
      		
@@ -179,21 +179,21 @@ void T0Interrupt(void) interrupt ISRTimer0
     					
   		 }
 			DataError=0;
-            HWFlag=0;
-		    HWTimes=0;												
+          												
 	    ZeroOld=(P0&0x10);								
 	    
 	  }
-	  else
+	  else if(delaytime==1)
      	 DataError++;	 
-    if(DataError>=600)									//当6ms没有收到红外信号，就认为此轮信号接收完成
+    if(DataError==600)									//当6ms没有收到红外信号，就认为此轮信号接收完成
     {
   	 	//	DataError=0;											//对计数值清零
    	 		DataF=0;
    	 	HWTimes++;
     }
-    if(DataError>=1500)
-	{
+   
+    if(DataError==1500)
+	{   delaytime=0;
 		DataError=0;
 		HWFlag=1;
 	}
@@ -252,10 +252,10 @@ void T0Interrupt(void) interrupt ISRTimer0
 		}
         	if(HWFlag==1)											//相同则获取成功
 									{
-										HWFlag=0;
-										HWTimes=1501;
+									     sw=1;
+									     HWFlag=0;
 										PinT=PinT1;
-                                        PinT=0x00;
+                                        PinT1=0x00;
 									}
 
 		
