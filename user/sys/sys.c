@@ -14,7 +14,7 @@ bit PinFlag;
 
 /********************************定义全局字节变量*********************/
 extern unsigned int PinT;
-extern unsigned char Level,PinBit;
+extern unsigned char Level,PinBit,SWFlag;
 
 /*********************************************************************
 * 函 数 名： InitT0T1
@@ -83,6 +83,7 @@ void T2Interrupt(void) interrupt ISRTimer2
 
 			if(MotorFlag==0)
 				{
+					if(SWFlag==1)
 					P05=0;										//输出2.5ms低电平
 					MotorFlag=1;
 			    return;
@@ -156,10 +157,10 @@ void T1Interrupt(void) interrupt ISRTimer1
 /**********************************************************************/
 void T0Interrupt(void) interrupt ISRTimer0 
 {		/********************************定义字节变量***********************/
-    static	unsigned int PinData,DataError,PinOld;
+    static	unsigned int PinData,DataError,PinOld,HWTimes;
     static	unsigned char DataF,TIME,P07Old,P07Time,ZeroOld;
     /********************************定义位变量*************************/
-    static  bit P07Flag;
+    static  bit P07Flag,HWFlag;
     TIME++;
     if(TIME>=100)
     {TIME=0;
@@ -185,11 +186,15 @@ void T0Interrupt(void) interrupt ISRTimer0
      	 DataError++;	 
     if(DataError>=600)									//当6ms没有收到红外信号，就认为此轮信号接收完成
     {
-  	 		DataError=0;											//对计数值清零
+  	 	//	DataError=0;											//对计数值清零
    	 		DataF=0;
-   	 	
+   	 	HWTimes++;
     }
-     
+    if(DataError>=1500)
+	{
+		DataError=0;
+		HWFlag=1;
+	}
      
      
      
@@ -205,15 +210,20 @@ void T0Interrupt(void) interrupt ISRTimer0
 						{  
 								if(PinOld==PinData)									//与上一次收到的值进行比较
 								{   
-										PinFlag=0;											//相同则获取成功
+									PinFlag=0;
+									if(HWFlag==1)											//相同则获取成功
+									{
+										HWFlag=0;
+										HWTimes=0;
 										PinT=PinData;
-					        	PinData=0;
-  							}
+									}
+					        		PinData=0;
+  								}
 								else																//否则记录下该值
-										PinOld=PinData;
+									PinOld=PinData;
 								PinData=0;
-  		    			DataF=0;
-  		    			PinFlag=0;
+  		    					DataF=0;
+  		    					PinFlag=0;
   		    					
 						} 
 						
