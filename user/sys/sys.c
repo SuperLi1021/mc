@@ -116,10 +116,10 @@ void T1Interrupt(void) interrupt ISRTimer1
 		i++;
    	if(i<10)														//每100us取一次值，比较高低电平的数量
    	{
-   		if((P0&0x10)==0X10)
+   		if((P0&0x10)==0X10)											//取值
    			PinH++;
    		else
-   			PinL++;
+   			PinL=PinL+1;
    		
    	}
    	else
