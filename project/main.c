@@ -44,22 +44,22 @@ void main(void)
            	switch(PinT)						//显示接收到的信号
 	  		{   
 	  				case 0x0277: Level=1 ;display(Level);break;
-	  				 
 	  				case 0x0239: Level=20;display(Level);break;
-	  				
-	  			
 	  				case 0x025F: Level=50;display(Level);break;
 	  				case 0x027E: Level=60;display(Level);break;
 					default:display(Level);break; 
 	  		}
-            if(sw==1)											
+            if(sw==1)								//			
 			{    sw=0;
-            	switch(PinT)						//显示接收到的信号
-	  	    	{ 	case 0x026F: if(Level>=20)Level=Level-10;;display(Level);break;//+	
-	  	         	case 0x027B: SWFlags=~SWFlags;display(Level);break;//switch
-                    case 0x027D: if(Level<=50)Level=Level+10;display(Level);break;//-
-                    	default:display(Level);break; 
-                    }
+            	switch(PinT)						
+	  	    	{ 	case 0x026F: if(Level>=20)Level=Level-10;;display(Level);break;
+				  																//+	
+	  	         	case 0x027B: SWFlags=~SWFlags;display(Level);break;					
+					   															//switch
+                    case 0x027D: if(Level<=50)Level=Level+10;display(Level);break;
+																				//-
+                    default:display(Level);break; 
+                }
             } 
 			if(SWFlags==0xff)
 			{

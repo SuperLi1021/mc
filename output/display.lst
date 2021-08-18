@@ -1,10 +1,10 @@
-C51 COMPILER V9.01   DISPLAY                                                               08/18/2021 11:42:32 PAGE 1   
+C51 COMPILER V9.60.0.0   DISPLAY                                                           08/18/2021 13:39:17 PAGE 1   
 
 
-C51 COMPILER V9.01, COMPILATION OF MODULE DISPLAY
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE DISPLAY
 OBJECT MODULE PLACED IN ..\output\display.obj
-COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE ..\user\sys\display.c BROWSE DEBUG OBJECTEXTEND PRINT(..\output\display.lst
-                    -) OBJECT(..\output\display.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\user\sys\display.c OPTIMIZE(8,SPEED) BROWSE INCDIR(C:\Keil_v5\C51\INC
+                    -;C:\Keil_v5\C51\INC) DEBUG OBJECTEXTEND PRINT(..\output\display.lst) TABS(2) OBJECT(..\output\display.obj)
 
 line level    source
 
@@ -35,25 +35,25 @@ line level    source
   25          /**********************************************************************/
   26          void display(unsigned char ADC)
   27          {
-  28   1              unsigned char   table[]={0xc0,0xf9,0xa4,0xb0,0x99,
+  28   1        unsigned char   table[]={0xc0,0xf9,0xa4,0xb0,0x99,
   29   1                                  0x92,0x82,0xf8,0x80,0x90,};   
-  30   1              {P07=0;                    //第一位显示，有小数点
-  31   2              P02=1;
-  32   2              P03=0;
-  33   2              P1=(table[ADC/10]);
+  30   1        {P07=0;                    //第一位显示，有小数点
+  31   2        P02=1;
+  32   2        P03=0;
+  33   2        P1=(table[ADC/10]);
   34   2        }Delay100us(10);
   35   1      
-  36   1              P1=0Xff;                   //消除虚影
-  37   1              Delay100us(1); 
+  36   1        P1=0Xff;                   //消除虚影
+  37   1        Delay100us(1); 
   38   1      
-  39   1              {P07=1;                     //第二位显示，无小数点
-  40   2              P02=0;
-  41   2              P03=1;
-  42   2              P1=(table[ADC%10]);
-  43   2              }Delay100us(10);
+  39   1        {P07=1;                     //第二位显示，无小数点
+  40   2        P02=0;
+  41   2        P03=1;
+  42   2        P1=(table[ADC%10]);
+  43   2        }Delay100us(10);
   44   1      
-  45   1              P1=0Xff;                   //消除虚影
-  46   1              Delay100us(1);
+  45   1        P1=0Xff;                   //消除虚影
+  46   1        Delay100us(1);
   47   1      
   48   1      }
 
@@ -62,7 +62,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =     85    ----
    CONSTANT SIZE    =     10    ----
    XDATA SIZE       =   ----    ----
-C51 COMPILER V9.01   DISPLAY                                                               08/18/2021 11:42:32 PAGE 2   
+C51 COMPILER V9.60.0.0   DISPLAY                                                           08/18/2021 13:39:17 PAGE 2   
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----      11
