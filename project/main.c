@@ -34,7 +34,7 @@ void main(void)
     WDTR = 0x5A;         			  //看门狗复位  
     InitT0T1();       				  //定时器初始化
     InitT2();
-    P1M=0xfd;         			    //io端口初始化
+    P1M=0xfE;         			    //io端口初始化
     P0M=0XEf;	
     P0OC=0X10;
     P2M=0X00;
@@ -45,9 +45,9 @@ void main(void)
 	  		switch(PinT)						//显示接收到的信号
 	  		{   
 	  				case 0x0277: Level=1 ;display(Level);break;
-	  				case 0x026F: if(Level<=50)Level=Level+10;display(Level);break;//- 
+	  				case 0x027D: if(Level<=50)Level=Level+10;display(Level);break;//- 
 	  				case 0x0239: Level=20;display(Level);break;
-	  				case 0x027D: if(Level>=20)Level=Level-10;;display(Level);break;//+
+	  				case 0x026F: if(Level>=20)Level=Level-10;;display(Level);break;//+
 	  				case 0x027B:SWFlags=~SWFlags;display(Level);break;//switch
 	  				case 0x025F: Level=50;display(Level);break;
 	  				case 0x027E: Level=60;display(Level);break;
@@ -55,7 +55,7 @@ void main(void)
 	  		}  
 			if(SWFlags==1)
 			{
-				if((P1&0X02)==0x02)
+				if((P1&0X01)==0x01)
 				{
 					
 					SWFlag=1;
