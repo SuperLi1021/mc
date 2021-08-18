@@ -1,10 +1,10 @@
-C51 COMPILER V9.60.0.0   SYS                                                               08/18/2021 09:50:27 PAGE 1   
+C51 COMPILER V9.01   SYS                                                                   08/18/2021 10:39:27 PAGE 1   
 
 
-C51 COMPILER V9.60.0.0, COMPILATION OF MODULE SYS
+C51 COMPILER V9.01, COMPILATION OF MODULE SYS
 OBJECT MODULE PLACED IN ..\output\sys.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\user\sys\sys.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\o
-                    -utput\sys.lst) TABS(2) OBJECT(..\output\sys.obj)
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE ..\user\sys\sys.c BROWSE DEBUG OBJECTEXTEND PRINT(..\output\sys.lst) OBJECT
+                    -(..\output\sys.obj)
 
 line level    source
 
@@ -13,7 +13,7 @@ line level    source
    3          /*模 块 名： 系统模块                                                */
    4          /*创 建 人： LICHAOFAN     日期：2021-08-13                          */
    5          /*修 改 人： LICHAOFAN     日期：2021-08-13                          */
-   6          /*功能描述： 提供定时，延时，信号抓取，信号处理                */
+   6          /*功能描述： 提供定时，延时，信号抓取，信号处理                                  */
    7          /*其他说明：                                                         */
    8          /*版本：                                                             */
    9          /*********************************************************************/
@@ -39,15 +39,15 @@ line level    source
   29          /*版本：
   30          /**********************************************************************/
   31          void InitT0T1(void)
-  32          { 
-  33   1        TH1   = 0x9b;          //装入初值
-  34   1        TL1   = 0x9b;
-  35   1        TH0   = 0x9B;          //装入初值
-  36   1        TL0   = 0x9B;
-  37   1        TMOD  = 0x66;          //使用T0 T1 自动装填模式
-  38   1        TCON0 = 0x22;          //外分频控制 /32
-  39   1        TCON  = 0x50;          //启动定时器T0 T1 的功能控制位
-  40   1        IEN0  = 0x8A;          //使能中断
+  32          {       
+  33   1              TH1   = 0x9b;                              //装入初值
+  34   1              TL1   = 0x9b;
+  35   1              TH0   = 0x9B;                                    //装入初值
+  36   1              TL0   = 0x9B;
+  37   1              TMOD  = 0x66;                                    //使用T0 T1 自动装填模式
+  38   1              TCON0 = 0x22;                                    //外分频控制 /32
+  39   1              TCON  = 0x50;                                    //启动定时器T0 T1 的功能控制位
+  40   1              IEN0  = 0x8A;                                    //使能中断
   41   1      }
   42          
   43          
@@ -62,17 +62,17 @@ line level    source
   52          * 设 计 者：LICHAOFAN 日期：2021-08-16
   53          * 修 改 者：LICHAOFAN 日期：2021-08-16
   54          /*版本：
-C51 COMPILER V9.60.0.0   SYS                                                               08/18/2021 09:50:27 PAGE 2   
+C51 COMPILER V9.01   SYS                                                                   08/18/2021 10:39:27 PAGE 2   
 
   55          /**********************************************************************/
   56          void InitT2(void)
-  57          { 
-  58   1        TH2 = 0xE5;           //定时2.5ms
-  59   1        TL2 = 0xF5;
-  60   1        T2CON = 0x00;
-  61   1        IEN0 |= 0xA0;         //使能T2中断
+  57          {       
+  58   1              TH2 = 0xE5;                                             //定时2.5ms
+  59   1              TL2 = 0xF5;
+  60   1              T2CON = 0x00;
+  61   1              IEN0 |= 0xA0;                                   //使能T2中断
   62   1      
-  63   1      }      
+  63   1      }                        
   64          /*********************************************************************
   65          * 函 数 名： T2Interrupt
   66          * 功能描述： 输出2.5ms低电平
@@ -86,28 +86,28 @@ line level    source
   74          /*版本：
   75          /**********************************************************************/
   76          void T2Interrupt(void) interrupt ISRTimer2
-  77          {   static bit MotorFlag;
-  78   1          TH2 = 0xE5;                     //重装初值
-  79   1          TL2 = 0xF5;
+  77          {       static bit MotorFlag;
+  78   1              TH2 = 0xE5;                                                                                     //重装初值
+  79   1              TL2 = 0xF5;
   80   1          if ((IRCON & 0x40) ==0x40)
   81   1          {
-  82   2             IRCON &= 0xBF;               // TF2清零
+  82   2             IRCON &= 0xBF;                                                   // TF2清零
   83   2      
-  84   2            if(MotorFlag==0)
-  85   2              {
-  86   3                if(SWFlag==1)
-  87   3                P05=0;                    //输出2.5ms低电平
-  88   3                MotorFlag=1;
-  89   3                return;
-  90   3              }
-  91   2            
-  92   2            if(MotorFlag==1)              //输出完毕，关闭定时器2
-  93   2              {
-  94   3                MotorFlag=0;  
-  95   3                P05=1;
-  96   3                T2CON =0x00;
+  84   2                              if(MotorFlag==0)
+  85   2                                      {
+  86   3                                      
+  87   3                                              P05=0;                                                                          //输出2.5ms低电平
+  88   3                                              MotorFlag=1;
+  89   3                                  return;
+  90   3                                      }
+  91   2                              
+  92   2                              if(MotorFlag==1)                                                        //输出完毕，关闭定时器2
+  93   2                                      {
+  94   3                                              MotorFlag=0;    
+  95   3                                              P05=1;
+  96   3                                              T2CON =0x00;
   97   3                return;
-  98   3              }
+  98   3                                      }
   99   2          }
  100   1      }
  101          /*********************************************************************
@@ -123,38 +123,38 @@ line level    source
  111          /*版本：
  112          /**********************************************************************/
  113          void T1Interrupt(void) interrupt ISRTimer1 
- 114          {   
- 115   1        /********************************定义字节变量***********************/
- 116   1          static unsigned char i,PinH,PinL;
-C51 COMPILER V9.60.0.0   SYS                                                               08/18/2021 09:50:27 PAGE 3   
+ 114          {               
+ 115   1              /********************************定义字节变量***********************/
+ 116   1                      static unsigned char i,PinH,PinL;
+C51 COMPILER V9.01   SYS                                                                   08/18/2021 10:39:27 PAGE 3   
 
- 117   1          i++;
- 118   1          if(i<10)                            //每100us取一次值，比较高低电平的数量
- 119   1          {
- 120   2            if((P0&0x10)==0X10)
- 121   2              PinH++;
- 122   2            else
- 123   2              PinL++;
- 124   2            
- 125   2          }
- 126   1          else
- 127   1          {
- 128   2            i=0;
- 129   2            if(PinH>PinL)                     //高电平多则该BIT为1
- 130   2            {PinBit=1;
+ 117   1                      i++;
+ 118   1              if(i<10)                                                                                                                //每100us取一次值，比较高低电平的数量
+ 119   1              {
+ 120   2                      if((P0&0x10)==0X10)
+ 121   2                              PinH++;
+ 122   2                      else
+ 123   2                              PinL++;
+ 124   2                      
+ 125   2              }
+ 126   1              else
+ 127   1              {
+ 128   2                      i=0;
+ 129   2                      if(PinH>PinL)                                                                                   //高电平多则该BIT为1
+ 130   2                      {PinBit=1;
  131   3                  P00=1;
  132   3             }
- 133   2            else                              //反之为0
- 134   2            {
- 135   3              PinBit=0;
+ 133   2                      else                                                                                                                    //反之为0
+ 134   2                      {
+ 135   3                              PinBit=0;
  136   3              P00=0;
- 137   3            }
- 138   2            PinH=0;                           //对计数值清零，将获取成功标志位置1，关闭定时器1
- 139   2            PinL=0;
- 140   2            PinFlag=1;
- 141   2            TR1=0;
- 142   2          }
- 143   1          
+ 137   3                      }
+ 138   2                      PinH=0;                                                                                                         //对计数值清零，将获取成功标志位置1，关闭定时器1
+ 139   2                      PinL=0;
+ 140   2                      PinFlag=1;
+ 141   2                      TR1=0;
+ 142   2              }
+ 143   1              
  144   1         
  145   1      }
  146          /*********************************************************************
@@ -170,148 +170,156 @@ line level    source
  156          /*版本：
  157          /**********************************************************************/
  158          void T0Interrupt(void) interrupt ISRTimer0 
- 159          {   /********************************定义字节变量***********************/
- 160   1          static  unsigned int PinData,DataError,PinOld,HWTimes;
- 161   1          static  unsigned char DataF,TIME,P07Old,P07Time,ZeroOld;
+ 159          {               /********************************定义字节变量***********************/
+ 160   1          static      unsigned int PinData,DataError,PinOld,HWTimes,PinT1;
+ 161   1          static      unsigned char DataF,TIME,P07Old,P07Time,ZeroOld;
  162   1          /********************************定义位变量*************************/
  163   1          static  bit P07Flag,HWFlag;
  164   1          TIME++;
  165   1          if(TIME>=100)
  166   1          {TIME=0;
- 167   2          P00=~P00;}                            //模拟过零信号
+ 167   2          P00=~P00;}                                                                                                          //模拟过零信号
  168   1      
  169   1      
  170   1      
  171   1      
- 172   1          if((P0&0X10)!=ZeroOld)              //抓取p04下降沿
- 173   1          {  
- 174   2             if((P0&0X10)==0)                  //若有则接收到红外信号，取下降沿作为触发
- 175   2            {
- 176   3              
- 177   3              TR1=1;                          //若抓到下降沿，则打开t1定时器获取数据
- 178   3              DataF++;
-C51 COMPILER V9.60.0.0   SYS                                                               08/18/2021 09:50:27 PAGE 4   
+ 172   1          if((P0&0X10)!=ZeroOld)                                                      //抓取p04下降沿
+ 173   1                      {  
+ 174   2                   if((P0&0X10)==0)                  //若有则接收到红外信号，取下降沿作为触发
+ 175   2              {
+ 176   3                      
+ 177   3                      TR1=1;                                                                                                  //若抓到下降沿，则打开t1定时器获取数据
+ 178   3                      DataF++;
+C51 COMPILER V9.01   SYS                                                                   08/18/2021 10:39:27 PAGE 4   
 
- 179   3                    
- 180   3             }
- 181   2            DataError=0;                        
- 182   2            ZeroOld=(P0&0x10);                
- 183   2            
- 184   2          }
- 185   1          else
- 186   1             DataError++;  
- 187   1          if(DataError>=600)                  //当6ms没有收到红外信号，就认为此轮信号接收完成
- 188   1          {
- 189   2            //  DataError=0;                      //对计数值清零
- 190   2              DataF=0;
- 191   2            HWTimes++;
- 192   2          }
- 193   1          if(DataError>=1500)
- 194   1        {
- 195   2          DataError=0;
- 196   2          HWFlag=1;
- 197   2        }
- 198   1           
- 199   1           
+ 179   3                                              
+ 180   3                       }
+ 181   2                              DataError=0;
+ 182   2                  HWFlag=0;
+ 183   2                          HWTimes=0;                                                                                          
+ 184   2                  ZeroOld=(P0&0x10);                                                          
+ 185   2                  
+ 186   2                }
+ 187   1                else
+ 188   1               DataError++;    
+ 189   1          if(DataError>=600)                                                                  //当6ms没有收到红外信号，就认为此轮信号接收完成
+ 190   1          {
+ 191   2                      //      DataError=0;                                                                                    //对计数值清零
+ 192   2                              DataF=0;
+ 193   2                      HWTimes++;
+ 194   2          }
+ 195   1          if(DataError>=1500)
+ 196   1              {
+ 197   2                      DataError=0;
+ 198   2                      HWFlag=1;
+ 199   2              }
  200   1           
  201   1           
- 202   1          if(DataF>=1)                        //读取信号
- 203   1          {
- 204   2              
- 205   2              if(PinFlag==1)                      //当有信号bit被完全获取
- 206   2              { 
- 207   3                      PinFlag=0;
- 208   3                      PinData=(PinData<<1)+PinBit;    //记录
- 209   3                  if(DataF==12)                         //当其为最后一位时
- 210   3                  {  
- 211   4                      if(PinOld==PinData)                 //与上一次收到的值进行比较
- 212   4                      {   
- 213   5                        PinFlag=0;
- 214   5                        if(HWFlag==1)                     //相同则获取成功
- 215   5                        {
- 216   6                          HWFlag=0;
- 217   6                          HWTimes=0;
- 218   6                          PinT=PinData;
- 219   6                        }
- 220   5                            PinData=0;
- 221   5                        }
- 222   4                      else                                //否则记录下该值
- 223   4                        PinOld=PinData;
- 224   4                      PinData=0;
- 225   4                          DataF=0;
- 226   4                          PinFlag=0;
- 227   4                          
- 228   4                  } 
- 229   3                  
- 230   3              }
- 231   2          
- 232   2         
- 233   2      
- 234   2          }
- 235   1          if((P2&0X01)!=P07Old)             //抓取过零信号
- 236   1          {  
- 237   2              P07Flag=1;
- 238   2      //      P05=~P05;
- 239   2              P07Old=(P2&0x01);
- 240   2            
-C51 COMPILER V9.60.0.0   SYS                                                               08/18/2021 09:50:27 PAGE 5   
+ 202   1           
+ 203   1           
+ 204   1          if(DataF>=1)                                                                                                //读取信号
+ 205   1              {
+ 206   2                                      
+ 207   2                                      if(PinFlag==1)                                                                                  //当有信号bit被完全获取
+ 208   2                                      {       
+ 209   3                                                                PinFlag=0;
+ 210   3                                                                PinData=(PinData<<1)+PinBit;          //记录
+ 211   3                                                      if(DataF==12)                                                                                                   //当其为最后一位时
+ 212   3                                                      {  
+ 213   4                                                                      if(PinOld==PinData)                                                                     //与上一次收到的值进行比较
+ 214   4                                                                      {   
+ 215   5                                                                              PinFlag=0;
+ 216   5                                                                           PinT1=PinData;
+ 217   5                                                                      PinData=0;
+ 218   5                                                                      }
+ 219   4                                                                      else                                                                                                                            //否则记录下该值
+ 220   4                                                                              PinOld=PinData;
+ 221   4                                                                      PinData=0;
+ 222   4                                                              DataF=0;
+ 223   4                                                              PinFlag=0;
+ 224   4                                                              
+ 225   4                                                      } 
+ 226   3                                                      
+ 227   3                                      }
+ 228   2          
+ 229   2         
+ 230   2      
+ 231   2                      }
+ 232   1                      if((P2&0X01)!=P07Old)                                                   //抓取过零信号
+ 233   1                      {  
+ 234   2                          P07Flag=1;
+ 235   2      //                      P05=~P05;
+ 236   2                          P07Old=(P2&0x01);
+ 237   2                  
+ 238   2                      }
+ 239   1                      if(P07Flag==1)                                                                          //当有过零时 计数加一
+ 240   1                      {   
+C51 COMPILER V9.01   SYS                                                                   08/18/2021 10:39:27 PAGE 5   
 
- 241   2          }
- 242   1          if(P07Flag==1)                    //当有过零时 计数加一
- 243   1          {   
- 244   2              P07Time++;
- 245   2          }
- 246   1          if(P07Time>=Level)                //当计数值大于规定值时，打开T2计时器，输出2.5ms的低电平
- 247   1          {   TH2 = 0xFF;
- 248   2              TL2 = 0xFE;
- 249   2              T2CON =0x01;
- 250   2              P07Time=0;
- 251   2              P07Flag=0;
- 252   2              
- 253   2          }
- 254   1          
- 255   1          
- 256   1          
- 257   1      }
- 258            
- 259          /*********************************************************************
- 260          * 函 数 名： Delay100us
- 261          * 功能描述： 提供100us延时
- 262          * 函数说明： 延时函数
- 263          * 调用函数： _nop_()
- 264          * 全局变量：
- 265          * 输 入： unsigned int n
- 266          * 返 回： 无
- 267          * 设 计 者：LICHAOFAN 日期：2021-08-13
- 268          * 修 改 者：LICHAOFAN 日期：2021-08-13
- 269          /*版本：
- 270          /**********************************************************************/
- 271          void Delay100us(unsigned char n)
- 272          {
- 273   1          unsigned char i, j;
- 274   1          i = 0;
- 275   1          j = 0;
- 276   1          for (i=0; i<n; i++) 
- 277   1          {
- 278   2              for (j=0; j<2; j++) 
- 279   2              {
- 280   3               _nop_(); _nop_();  _nop_(); _nop_();
- 281   3             _nop_();  _nop_(); _nop_(); _nop_();
- 282   3              }
- 283   2          }
- 284   1      }
- 285          
+ 241   2                              P07Time++;
+ 242   2                      }
+ 243   1                      if(P07Time>=Level)                                                              //当计数值大于规定值时，打开T2计时器，输出2.5ms的低电平
+ 244   1                      {       if(SWFlag==1)
+ 245   2                      {  TH2 = 0xFF;
+ 246   3                                       TL2 = 0xFE;
+ 247   3                                      T2CON =0x01;
+ 248   3                          }
+ 249   2                                      P07Time=0;
+ 250   2                                      P07Flag=0;
+ 251   2                                      
+ 252   2                      }
+ 253   1                      if(HWFlag==1)                                                                                   //相同则获取成功
+ 254   1                                                                              {
+ 255   2                                                                                      HWFlag=0;
+ 256   2                                                                                      HWTimes=1501;
+ 257   2                                                                                      PinT=PinT1;
+ 258   2                                              PinT=0x00;
+ 259   2                                                                              }
+ 260   1      
+ 261   1                      
+ 262   1                
+ 263   1      }
+ 264            
+ 265          /*********************************************************************
+ 266          * 函 数 名： Delay100us
+ 267          * 功能描述： 提供100us延时
+ 268          * 函数说明： 延时函数
+ 269          * 调用函数： _nop_()
+ 270          * 全局变量：
+ 271          * 输 入： unsigned int n
+ 272          * 返 回： 无
+ 273          * 设 计 者：LICHAOFAN 日期：2021-08-13
+ 274          * 修 改 者：LICHAOFAN 日期：2021-08-13
+ 275          /*版本：
+ 276          /**********************************************************************/
+ 277          void Delay100us(unsigned char n)
+ 278          {
+ 279   1          unsigned char i, j;
+ 280   1          i = 0;
+ 281   1          j = 0;
+ 282   1          for (i=0; i<n; i++) 
+ 283   1          {
+ 284   2              for (j=0; j<2; j++) 
+ 285   2              {
+ 286   3                       _nop_(); _nop_();  _nop_(); _nop_();
+ 287   3                               _nop_();  _nop_(); _nop_(); _nop_();
+ 288   3              }
+ 289   2          }
+ 290   1      }
+ 291          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    458    ----
+   CODE SIZE        =    440    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     16    ----
+   DATA SIZE        =     18    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =      4    ----
 END OF MODULE INFORMATION.
+
+C51 COMPILER V9.01   SYS                                                                   08/18/2021 10:39:27 PAGE 6   
 
 
 C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

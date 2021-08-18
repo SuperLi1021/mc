@@ -48,10 +48,10 @@ void main(void)
 	  				case 0x027D: if(Level<=50)Level=Level+10;display(Level);break;//- 
 	  				case 0x0239: Level=20;display(Level);break;
 	  				case 0x026F: if(Level>=20)Level=Level-10;;display(Level);break;//+
-	  				case 0x027B:SWFlags=~SWFlags;display(Level);break;//switch
+	  				case 0x027B: SWFlags=~SWFlags;display(Level);break;//switch
 	  				case 0x025F: Level=50;display(Level);break;
 	  				case 0x027E: Level=60;display(Level);break;
-					default:Level=0;display(Level);break; 
+					default:display(Level);break; 
 	  		}  
 			if(SWFlags==1)
 			{

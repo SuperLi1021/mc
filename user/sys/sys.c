@@ -83,7 +83,7 @@ void T2Interrupt(void) interrupt ISRTimer2
 
 			if(MotorFlag==0)
 				{
-					if(SWFlag==1)
+				
 					P05=0;										//输出2.5ms低电平
 					MotorFlag=1;
 			    return;
@@ -157,7 +157,7 @@ void T1Interrupt(void) interrupt ISRTimer1
 /**********************************************************************/
 void T0Interrupt(void) interrupt ISRTimer0 
 {		/********************************定义字节变量***********************/
-    static	unsigned int PinData,DataError,PinOld,HWTimes;
+    static	unsigned int PinData,DataError,PinOld,HWTimes,PinT1;
     static	unsigned char DataF,TIME,P07Old,P07Time,ZeroOld;
     /********************************定义位变量*************************/
     static  bit P07Flag,HWFlag;
@@ -178,7 +178,9 @@ void T0Interrupt(void) interrupt ISRTimer0
     		DataF++;
     					
   		 }
-			DataError=0;												
+			DataError=0;
+            HWFlag=0;
+		    HWTimes=0;												
 	    ZeroOld=(P0&0x10);								
 	    
 	  }
@@ -211,12 +213,7 @@ void T0Interrupt(void) interrupt ISRTimer0
 								if(PinOld==PinData)									//与上一次收到的值进行比较
 								{   
 									PinFlag=0;
-									if(HWFlag==1)											//相同则获取成功
-									{
-										HWFlag=0;
-										HWTimes=0;
-										PinT=PinData;
-									}
+								     PinT1=PinData;
 					        		PinData=0;
   								}
 								else																//否则记录下该值
@@ -244,14 +241,23 @@ void T0Interrupt(void) interrupt ISRTimer0
 		  	P07Time++;
 		}
 		if(P07Time>=Level)								//当计数值大于规定值时，打开T2计时器，输出2.5ms的低电平
-		{   TH2 = 0xFF;
-		   	TL2 = 0xFE;
-				T2CON =0x01;
+		{     	if(SWFlag==1)
+                {  TH2 = 0xFF;
+		   	         TL2 = 0xFE;
+			    	T2CON =0x01;
+                    }
 				P07Time=0;
 				P07Flag=0;
 				
 		}
-		
+        	if(HWFlag==1)											//相同则获取成功
+									{
+										HWFlag=0;
+										HWTimes=1501;
+										PinT=PinT1;
+                                        PinT=0x00;
+									}
+
 		
 	  
 }
