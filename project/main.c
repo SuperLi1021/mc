@@ -41,7 +41,7 @@ void main(void)
     Level=60;
     while (1) 
   	{  WDTR = 0x5A;
-           	switch(PinT)						//显示接收到的信号
+           	switch(PinT)													//显示接收到的信号，
 	  		{   
 	  				case 0x0277: Level=1 ;display(Level);break;
 	  				case 0x0239: Level=20;display(Level);break;
@@ -49,13 +49,13 @@ void main(void)
 	  				case 0x027E: Level=60;display(Level);break;
 					default:display(Level);break; 
 	  		}
-            if(sw==1)								//			
+            if(sw==1)														//对接收到的有次数要求的信号进行处理并显示			
 			{    sw=0;
             	switch(PinT)						
 	  	    	{ 	case 0x026F: if(Level>=20)Level=Level-10;;display(Level);break;
 				  																//+	
 	  	         	case 0x027B: SWFlags=~SWFlags;display(Level);break;					
-					   															//switch
+					   															//开关
                     case 0x027D: if(Level<=50)Level=Level+10;display(Level);break;
 																				//-
                     default:display(Level);break; 
@@ -63,12 +63,12 @@ void main(void)
             } 
 			if(SWFlags==0xff)
 			{
-				if((P1&0X01)==0x01)
-				{
+				if((P1&0X01)==0x01)											//仅当遥控开关与按键开关均处于打开状态
+				{															//才启动电机				
 					
 					SWFlag=1;
 				}
-				else
+				else														//否则电机不动
 					SWFlag=0;
 			}
 			else

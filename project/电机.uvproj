@@ -426,7 +426,7 @@
                       <MiscControls></MiscControls>
                       <Define></Define>
                       <Undefine></Undefine>
-                      <IncludePath>..\user\sys</IncludePath>
+                      <IncludePath>..\user\sys;C:\Keil_v5\C51\INC;C:\Keil_v5\C51\INC\SONIX</IncludePath>
                     </VariousControls>
                   </C51>
                 </File51>
