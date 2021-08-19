@@ -5,7 +5,8 @@
             "includePath": [
                 "C:\\Keil_v5\\C51\\INC",
                 "c:\\Users\\28388\\Desktop\\电机控制\\project",
-                "c:\\Users\\28388\\Desktop\\电机控制\\user\\sys"
+                "c:\\Users\\28388\\Desktop\\电机控制\\user\\sys",
+                "C:\\Keil_v5\\C51\\INC\\SONIX"
             ],
             "defines": [
                 "__C51__",

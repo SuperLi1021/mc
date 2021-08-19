@@ -183,7 +183,7 @@ void T0Interrupt(void) interrupt ISRTimer0
 
 
 
-	for(i=0;i<5,i++)
+	for(i=0;i<5;i++)
     {
 		_nop_(); _nop_(); 
 		if((P0&0X10)!=ZeroOld)											//×¥È¡p04ÏÂ½µÑØ
@@ -211,7 +211,7 @@ void T0Interrupt(void) interrupt ISRTimer0
   			}
 			DataError=0;        												
 		    ZeroOld=(P0&0x10);  
-		}  
+		  
 	  }
 	else if(delaytime==1)
      	DataError++;	 
