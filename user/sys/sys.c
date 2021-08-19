@@ -112,17 +112,29 @@ void T1Interrupt(void) interrupt ISRTimer1
 {		
 	/********************************定义字节变量***********************/
 		static unsigned char i,PinH,PinL;
+		unsigned char j,bitl,bith;
 		i++;
+
    	if(i<10)														//每100us取一次值，比较高低电平的数量
    	{
-   		if((P0&0x10)==0X10)	
-		{	_nop_();
-		    if((P0&0x10)==0X10)											//取值
-   			PinH++;
-		}
+		for(j=0;j<5;j++)
+   		{	_nop_();_nop_();
+			if((P0&0x10)==0X10)	
+			{
+	   														//取值
+   				bith++;
+			}
    		else
-   			PinL++;
-   		
+   			bitl++;
+		}
+		if(bitl>bith)
+		{
+			PinL++;
+		}
+		else
+			PinH++;
+		bith=0;
+		bitl=0;
    	}
    	else
    	{
@@ -161,6 +173,7 @@ void T0Interrupt(void) interrupt ISRTimer0
 {		/********************************定义字节变量***********************/
     static	unsigned int PinData,DataError,PinOld,HWTimes,PinT1;
     static	unsigned char DataF,TIME,P07Old,P07Time,ZeroOld;
+	unsigned char i,j,k;
     /********************************定义位变量*************************/
     static  bit P07Flag,delaytime;
     TIME++;
@@ -170,11 +183,22 @@ void T0Interrupt(void) interrupt ISRTimer0
 
 
 
-
-    if((P0&0X10)!=ZeroOld)											//抓取p04下降沿
-	{  	_nop_(); _nop_(); 
-		 if((P0&0X10)!=ZeroOld)											//抓取p04下降沿
+	for(i=0;i<5,i++)
+    {
+		_nop_(); _nop_(); 
+		if((P0&0X10)!=ZeroOld)											//抓取p04下降沿
 		{
+			j++;
+		}
+	}
+	if(j>3)
+	{
+		k=1;
+	}
+	j=0;
+	
+	if(k==1)											//抓取p04下降沿
+	{  	k=0;
 			 
 
 			delaytime=1;
