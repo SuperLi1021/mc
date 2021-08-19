@@ -14,7 +14,8 @@
 
 /********************************定义全局字节变量*********************/
 unsigned int PinT;
-unsigned char Level,PinBit,SWFlag,SWFlags,HWFlag,sw;
+unsigned char Level,PinBit,SWFlag,HWFlag,sw;
+bit SWFlags;
 /********************************定义全局位变量***********************/
 
 /*********************************************************************
@@ -38,6 +39,7 @@ void main(void)
     P0M=0XEf;	
     P0OC=0X10;
     P2M=0X00;
+   // P2UR=0XFF;
     Level=60;
     while (1) 
   	{  WDTR = 0x5A;
@@ -61,11 +63,11 @@ void main(void)
                     default:display(Level);break; 
                 }
             } 
-			if(SWFlags==0xff)
-			{
+			if(SWFlags==0)
+			{   
 				if((P1&0X01)==0x01)											//仅当遥控开关与按键开关均处于打开状态
 				{															//才启动电机				
-					
+				
 					SWFlag=1;
 				}
 				else														//否则电机不动

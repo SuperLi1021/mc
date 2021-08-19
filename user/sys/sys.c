@@ -77,8 +77,7 @@ void T2Interrupt(void) interrupt ISRTimer2
 { 	static bit MotorFlag;
    	TH2 = 0xE5;											//重装初值
   	TL2 = 0xF5;
-    if ((IRCON & 0x40) ==0x40)
-    {
+   
        IRCON &= 0xBF; 									// TF2清零
 
 		if(MotorFlag==0)
@@ -95,7 +94,7 @@ void T2Interrupt(void) interrupt ISRTimer2
 			T2CON =0x00;
         	return;
 		}
-    }
+   
 }
 /*********************************************************************
 * 函 数 名： T1Interrupt
@@ -131,12 +130,12 @@ void T1Interrupt(void) interrupt ISRTimer1
    		if(PinH>PinL)											//高电平多则该BIT为1
    		{
 			PinBit=1;
-            P00=1;
+          //  P00=1;
         }
    		else															//反之为0
    		{
    			PinBit=0;
-        	P00=0;
+        //	P00=0;
    		}
    		PinH=0;														//对计数值清零，将获取成功标志位置1，关闭定时器1
    		PinL=0;
@@ -234,19 +233,21 @@ void T0Interrupt(void) interrupt ISRTimer0
 				}
 
 		}
+
 		if((P2&0X01)!=P07Old)											//抓取过零信号
 		{  
 			_nop_(); _nop_();
 			if((P2&0X01)!=P07Old)											//抓取过零信号
 			{  
  		 	   P07Flag=1;
-//				P05=~P05;
+			
 			    P07Old=(P2&0x01);
 	    	}
 		}
 		if(P07Flag==1)													//当有过零时 计数加一
 		{   
 		  	P07Time++;
+            	
 		}
 		if(P07Time>=Level)												//当计数值大于规定值时，打开T2计时器，输出2.5ms的低电平
 		{     	
@@ -255,6 +256,7 @@ void T0Interrupt(void) interrupt ISRTimer0
 				TH2 = 0xFF;
 		   	    TL2 = 0xFE;
 			    T2CON =0x01;
+                  
             }
 			P07Time=0;
 			P07Flag=0;

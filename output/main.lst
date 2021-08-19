@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              08/18/2021 16:01:47 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/19/2021 09:53:24 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -25,86 +25,88 @@ line level    source
   14          
   15          /********************************定义全局字节变量*********************/
   16          unsigned int PinT;
-  17          unsigned char Level,PinBit,SWFlag,SWFlags,HWFlag,sw;
-  18          /********************************定义全局位变量***********************/
-  19          
-  20          /*********************************************************************
-  21          * 函 数 名： main
-  22          * 功能描述： 主函数
-  23          * 函数说明： 主函数
-  24          * 调用函数： 
-  25          * 全局变量： PinT
-  26          * 输 入： 无
-  27          * 返 回： 无
-  28          * 设 计 者：LICHAOFAN 日期：2021-08-13
-  29          * 修 改 者：LICHAOFAN 日期：2021-08-13
-  30          /*版本：
-  31          /**********************************************************************/
-  32          void main(void) 
-  33          { 
-  34   1          WDTR = 0x5A;                //看门狗复位  
-  35   1          InitT0T1();                 //定时器初始化
-  36   1          InitT2();
-  37   1          P1M=0xfE;                   //io端口初始化
-  38   1          P0M=0XEf; 
-  39   1          P0OC=0X10;
-  40   1          P2M=0X00;
-  41   1          Level=60;
-  42   1          while (1) 
-  43   1          {  WDTR = 0x5A;
-  44   2                  switch(PinT)                          //显示接收到的信号，
-  45   2              {   
-  46   3                  case 0x0277: Level=1 ;display(Level);break;
-  47   3                  case 0x0239: Level=20;display(Level);break;
-  48   3                  case 0x025F: Level=50;display(Level);break;
-  49   3                  case 0x027E: Level=60;display(Level);break;
-  50   3                default:display(Level);break; 
-  51   3              }
-  52   2                  if(sw==1)                           //对接收到的有次数要求的信号进行处理并显示      
-  53   2            {    sw=0;
-C51 COMPILER V9.60.0.0   MAIN                                                              08/18/2021 16:01:47 PAGE 2   
+  17          unsigned char Level,PinBit,SWFlag,HWFlag,sw;
+  18          bit SWFlags;
+  19          /********************************定义全局位变量***********************/
+  20          
+  21          /*********************************************************************
+  22          * 函 数 名： main
+  23          * 功能描述： 主函数
+  24          * 函数说明： 主函数
+  25          * 调用函数： 
+  26          * 全局变量： PinT
+  27          * 输 入： 无
+  28          * 返 回： 无
+  29          * 设 计 者：LICHAOFAN 日期：2021-08-13
+  30          * 修 改 者：LICHAOFAN 日期：2021-08-13
+  31          /*版本：
+  32          /**********************************************************************/
+  33          void main(void) 
+  34          { 
+  35   1          WDTR = 0x5A;                //看门狗复位  
+  36   1          InitT0T1();                 //定时器初始化
+  37   1          InitT2();
+  38   1          P1M=0xfE;                   //io端口初始化
+  39   1          P0M=0XEf; 
+  40   1          P0OC=0X10;
+  41   1          P2M=0X00;
+  42   1         // P2UR=0XFF;
+  43   1          Level=60;
+  44   1          while (1) 
+  45   1          {  WDTR = 0x5A;
+  46   2                  switch(PinT)                          //显示接收到的信号，
+  47   2              {   
+  48   3                  case 0x0277: Level=1 ;display(Level);break;
+  49   3                  case 0x0239: Level=20;display(Level);break;
+  50   3                  case 0x025F: Level=50;display(Level);break;
+  51   3                  case 0x027E: Level=60;display(Level);break;
+  52   3                default:display(Level);break; 
+  53   3              }
+C51 COMPILER V9.60.0.0   MAIN                                                              08/19/2021 09:53:24 PAGE 2   
 
-  54   3                    switch(PinT)            
-  55   3                  {   case 0x026F: if(Level>=20)Level=Level-10;;display(Level);break;
-  56   4                                                //+ 
-  57   4                      case 0x027B: SWFlags=~SWFlags;display(Level);break;         
-  58   4                                                //开关
-  59   4                          case 0x027D: if(Level<=50)Level=Level+10;display(Level);break;
-  60   4                                              //-
-  61   4                          default:display(Level);break; 
-  62   4                      }
-  63   3                  } 
-  64   2            if(SWFlags==0xff)
-  65   2            {
-  66   3              if((P1&0X01)==0x01)                     //仅当遥控开关与按键开关均处于打开状态
-  67   3              {                             //才启动电机        
-  68   4                
-  69   4                SWFlag=1;
-  70   4              }
-  71   3              else                            //否则电机不动
-  72   3                SWFlag=0;
-  73   3            }
-  74   2            else
-  75   2            SWFlag=0;
-  76   2      
-  77   2      
-  78   2          }
-  79   1      }
-  80          
-  81          
+  54   2                  if(sw==1)                           //对接收到的有次数要求的信号进行处理并显示      
+  55   2            {    sw=0;
+  56   3                    switch(PinT)            
+  57   3                  {   case 0x026F: if(Level>=20)Level=Level-10;;display(Level);break;
+  58   4                                                //+ 
+  59   4                      case 0x027B: SWFlags=~SWFlags;display(Level);break;         
+  60   4                                                //开关
+  61   4                          case 0x027D: if(Level<=50)Level=Level+10;display(Level);break;
+  62   4                                              //-
+  63   4                          default:display(Level);break; 
+  64   4                      }
+  65   3                  } 
+  66   2            if(SWFlags==0)
+  67   2            {   
+  68   3              if((P1&0X01)==0x01)                     //仅当遥控开关与按键开关均处于打开状态
+  69   3              {                             //才启动电机        
+  70   4              
+  71   4                SWFlag=1;
+  72   4              }
+  73   3              else                            //否则电机不动
+  74   3                SWFlag=0;
+  75   3            }
+  76   2            else
+  77   2            SWFlag=0;
+  78   2      
+  79   2      
+  80   2          }
+  81   1      }
   82          
   83          
   84          
+  85          
+  86          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    191    ----
+   CODE SIZE        =    188    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      8    ----
+   DATA SIZE        =      7    ----
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =   ----    ----
+   BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.
 
 
