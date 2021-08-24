@@ -14,7 +14,8 @@
 
 /********************************定义全局字节变量*********************/
 unsigned int PinT;
-unsigned char Level,PinBit,SWFlag,SWFlags;
+unsigned char Level,PinBit,SWFlag,HWFlag,sw;
+bit SWFlags;
 /********************************定义全局位变量***********************/
 
 /*********************************************************************
@@ -34,37 +35,51 @@ void main(void)
     WDTR = 0x5A;         			  //看门狗复位  
     InitT0T1();       				  //定时器初始化
     InitT2();
-    P1M=0xfd;         			    //io端口初始化
-    P0M=0XEf;	
+    P1M=0xfE;         			    //io端口初始化
+    P0M=0XEe;	
     P0OC=0X10;
     P2M=0X00;
-    Level=60;
+    P05=0;
+   // P2UR=0XFF;
+    Level=70;
+    SWFlags=1;
     while (1) 
   	{  WDTR = 0x5A;
-
-	  		switch(PinT)						//显示接收到的信号
+           	switch(PinT)													//显示接收到的信号，
 	  		{   
 	  				case 0x0277: Level=1 ;display(Level);break;
-	  				case 0x026F: if(Level<=50)Level=Level+10;display(Level);break;//- 
 	  				case 0x0239: Level=20;display(Level);break;
-	  				case 0x027D: if(Level>=20)Level=Level-10;;display(Level);break;//+
-	  				case 0x027B:SWFlags=~SWFlags;display(Level);break;//switch
 	  				case 0x025F: Level=50;display(Level);break;
-	  				case 0x027E: Level=60;display(Level);break;
-					default:Level=0;display(Level);break; 
-	  		}  
-			if(SWFlags==1)
-			{
-				if((P1&0X02)==0x02)
-				{
-					
+	  				case 0x027E: Level=70;display(Level);break;
+					default:display(Level);break; 
+	  		}
+            if(sw==1)														//对接收到的有次数要求的信号进行处理并显示			
+			{    sw=0;
+            	switch(PinT)						
+	  	    	{ 	case 0x026F: if(Level>=20)Level=Level-10;;display(Level);break;
+				  																//+	
+	  	         	case 0x027B: SWFlags=~SWFlags;display(Level);break;					
+					   															//开关
+                    case 0x027D: if(Level<=60)Level=Level+10;display(Level);break;
+																				//-
+                    default:display(Level);break; 
+                }
+            } 
+			if(SWFlags==0)
+			{   
+				if((P1&0X01)!=0x01)											//仅当遥控开关与按键开关均处于打开状态
+				{															//才启动电机				
+				
 					SWFlag=1;
+
 				}
-				else
-					SWFlag=0;
+				else														//否则电机不动
+				{	SWFlag=0;Level=70;   }
 			}
 			else
-			SWFlag=0;
+		{	SWFlag=0;Level=70; }
+        if((P1&0X01)==0x01)
+            Level=70;
 
 
   	}

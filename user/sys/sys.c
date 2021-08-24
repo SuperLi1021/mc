@@ -8,13 +8,18 @@
 /*版本：                                                             */
 /*********************************************************************/
 
+
+
+
+//输出 P05    过零P00 红外P04开关 p10
+
 #include <SN8F5702.h>
 /********************************定义全局位变量***********************/
 bit PinFlag;
 
 /********************************定义全局字节变量*********************/
 extern unsigned int PinT;
-extern unsigned char Level,PinBit,SWFlag;
+extern unsigned char Level,PinBit,SWFlag,HWFlag,sw;
 
 /*********************************************************************
 * 函 数 名： InitT0T1
@@ -77,26 +82,24 @@ void T2Interrupt(void) interrupt ISRTimer2
 { 	static bit MotorFlag;
    	TH2 = 0xE5;											//重装初值
   	TL2 = 0xF5;
-    if ((IRCON & 0x40) ==0x40)
-    {
-       IRCON &= 0xBF; 							// TF2清零
+   
+       IRCON &= 0xBF; 									// TF2清零
 
-			if(MotorFlag==0)
-				{
-					if(SWFlag==1)
-					P05=0;										//输出2.5ms低电平
-					MotorFlag=1;
-			    return;
-				}
+		if(MotorFlag==0)
+		{				
+			P05=1;										//输出2.5ms低电平
+			MotorFlag=1;
+		    return;
+		}
 			
-			if(MotorFlag==1)							//输出完毕，关闭定时器2
-				{
-					MotorFlag=0;	
-					P05=1;
-					T2CON =0x00;
-          return;
-				}
-    }
+		if(MotorFlag==1)								//输出完毕，关闭定时器2
+		{
+			MotorFlag=0;	
+			P05=0;
+			T2CON =0x00;
+        	return;
+		}
+   
 }
 /*********************************************************************
 * 函 数 名： T1Interrupt
@@ -114,26 +117,42 @@ void T1Interrupt(void) interrupt ISRTimer1
 {		
 	/********************************定义字节变量***********************/
 		static unsigned char i,PinH,PinL;
+		unsigned char j,bitl,bith;
 		i++;
+
    	if(i<10)														//每100us取一次值，比较高低电平的数量
    	{
-   		if((P0&0x10)==0X10)
-   			PinH++;
+		for(j=0;j<5;j++)
+   		{	_nop_();_nop_();
+			if((P0&0x10)==0X10)	
+			{
+	   														//取值
+   				bith++;
+			}
    		else
-   			PinL++;
-   		
+   			bitl++;
+		}
+		if(bitl>bith)
+		{
+			PinL++;
+		}
+		else
+			PinH++;
+		bith=0;
+		bitl=0;
    	}
    	else
    	{
    		i=0;
    		if(PinH>PinL)											//高电平多则该BIT为1
-   		{PinBit=1;
-            P00=1;
-       }
+   		{
+			PinBit=1;
+          //  P00=1;
+        }
    		else															//反之为0
    		{
    			PinBit=0;
-        P00=0;
+        //	P00=0;
    		}
    		PinH=0;														//对计数值清零，将获取成功标志位置1，关闭定时器1
    		PinL=0;
@@ -157,41 +176,49 @@ void T1Interrupt(void) interrupt ISRTimer1
 /**********************************************************************/
 void T0Interrupt(void) interrupt ISRTimer0 
 {		/********************************定义字节变量***********************/
-    static	unsigned int PinData,DataError,PinOld,HWTimes;
+    static	unsigned int PinData,DataError,PinOld,HWTimes,PinT1;
     static	unsigned char DataF,TIME,P07Old,P07Time,ZeroOld;
+	
     /********************************定义位变量*************************/
-    static  bit P07Flag,HWFlag;
+    static  bit P07Flag,delaytime;
     TIME++;
     if(TIME>=100)
     {TIME=0;
-    P00=~P00;}														//模拟过零信号
+   // P00=~P00;
+   }														//模拟过零信号
 
 
 
 
-    if((P0&0X10)!=ZeroOld)							//抓取p04下降沿
-		{  
- 	     if((P0&0X10)==0)                  //若有则接收到红外信号，取下降沿作为触发
-    	{
+    if((P0&0X10)!=ZeroOld)											//抓取p04下降沿
+	{  	_nop_(); _nop_(); 
+		 if((P0&0X10)!=ZeroOld)											//抓取p04下降沿
+		{
+			 
+
+			delaytime=1;
+ 	 	   if((P0&0X10)==0)                 							//若有则接收到红外信号，取下降沿作为触发
+    		{
      		
-    		TR1=1;													//若抓到下降沿，则打开t1定时器获取数据
-    		DataF++;
+    			TR1=1;													//若抓到下降沿，则打开t1定时器获取数据
+   		 		DataF++;
     					
-  		 }
-			DataError=0;												
-	    ZeroOld=(P0&0x10);								
-	    
+  			}
+			DataError=0;        												
+		    ZeroOld=(P0&0x10);  
+		}  
 	  }
-	  else
-     	 DataError++;	 
-    if(DataError>=600)									//当6ms没有收到红外信号，就认为此轮信号接收完成
+	else if(delaytime==1)
+     	DataError++;	 
+    if(DataError==600)												//当6ms没有收到红外信号，就认为此轮信号接收完成
     {
   	 	//	DataError=0;											//对计数值清零
-   	 		DataF=0;
+   	 	DataF=0;
    	 	HWTimes++;
     }
-    if(DataError>=1500)
-	{
+   
+    if(DataError==1500)												//当15ms未收到红外信号，认为该次按键结束
+	{   delaytime=0;
 		DataError=0;
 		HWFlag=1;
 	}
@@ -199,27 +226,22 @@ void T0Interrupt(void) interrupt ISRTimer0
      
      
      
-    if(DataF>=1)												//读取信号
+    if(DataF>=1)														//读取信号
    	{
 				
 				if(PinFlag==1)											//当有信号bit被完全获取
 				{	
 							  PinFlag=0;
-							  PinData=(PinData<<1)+PinBit;		//记录
-						if(DataF==12)													//当其为最后一位时
+							  PinData=(PinData<<1)+PinBit;				//记录
+						if(DataF==12)									//当其为最后一位时
 						{  
-								if(PinOld==PinData)									//与上一次收到的值进行比较
+								if(PinOld==PinData)						//与上一次收到的值进行比较
 								{   
 									PinFlag=0;
-									if(HWFlag==1)											//相同则获取成功
-									{
-										HWFlag=0;
-										HWTimes=0;
-										PinT=PinData;
-									}
+								     PinT1=PinData;
 					        		PinData=0;
   								}
-								else																//否则记录下该值
+								else									//否则记录下该值
 									PinOld=PinData;
 								PinData=0;
   		    					DataF=0;
@@ -228,30 +250,45 @@ void T0Interrupt(void) interrupt ISRTimer0
 						} 
 						
 				}
-    
-   
 
 		}
-		if((P2&0X01)!=P07Old)							//抓取过零信号
+
+		if((P0&0X01)!=P07Old)											//抓取过零信号
 		{  
- 		    P07Flag=1;
-//			P05=~P05;
-		    P07Old=(P2&0x01);
-	    
+			_nop_(); _nop_();
+			if((P0&0X01)!=P07Old)											//抓取过零信号
+			{  
+ 		 	   P07Flag=1;
+			
+			    P07Old=(P0&0x01);
+	    	}
 		}
-		if(P07Flag==1)										//当有过零时 计数加一
+		if(P07Flag==1)													//当有过零时 计数加一
 		{   
 		  	P07Time++;
+            	
 		}
-		if(P07Time>=Level)								//当计数值大于规定值时，打开T2计时器，输出2.5ms的低电平
-		{   TH2 = 0xFF;
-		   	TL2 = 0xFE;
-				T2CON =0x01;
-				P07Time=0;
-				P07Flag=0;
+		if(P07Time>=Level)												//当计数值大于规定值时，打开T2计时器，输出2.5ms的低电平
+		{     	
+			if(SWFlag==1)												//当两个开关均打开时再开启定时器2输出
+            {  	
+				TH2 = 0xFF;
+		   	    TL2 = 0xFE;
+			    T2CON =0x01;
+                  
+            }
+			P07Time=0;
+			P07Flag=0;
 				
 		}
-		
+        if(HWFlag==1)												//当按键已经结束时，将读取的值传出去
+		{
+		    sw=1;													//通知主函数该次按键结束
+		    HWFlag=0;												//按键结束标志
+			PinT=PinT1;												//传至主函数
+            PinT1=0x00;
+		}
+
 		
 	  
 }

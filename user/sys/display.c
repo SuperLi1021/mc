@@ -25,24 +25,24 @@ void dispaly(unsigned char ADC);
 /**********************************************************************/
 void display(unsigned char ADC)
 {
-	unsigned char   table[]={0xc0,0xf9,0xa4,0xb0,0x99,
-                            0x92,0x82,0xf8,0x80,0x90,};   
-	{P07=0;                    //第一位显示，有小数点
-	P02=1;
-	P03=0;
-	P1=(table[ADC/10]);
-  }Delay100us(10);
-
-	P1=0Xff;                   //消除虚影
-	Delay100us(1); 
-
-	{P07=1;                     //第二位显示，无小数点
-	P02=0;
-	P03=1;
-	P1=(table[ADC%10]);
-	}Delay100us(10);
-
-	P1=0Xff;                   //消除虚影
-	Delay100us(1);
+//	unsigned char   table[]={0xc0,0xf9,0xa4,0xb0,0x99,
+//                            0x92,0x82,0xf8,0x80,0x90,};   
+//	{P07=0;                    //第一位显示，有小数点
+//	P02=1;
+//	P03=0;
+//	P1=(table[ADC/10]);
+//  }Delay100us(10);
+//
+//	P1=0Xff;                   //消除虚影
+//	Delay100us(1); 
+//
+//	{P07=1;                     //第二位显示，无小数点
+//	P02=0;
+//	P03=1;
+//	P1=(table[ADC%10]);
+//	}Delay100us(10);
+//
+//	P1=0Xff;                   //消除虚影
+//	Delay100us(1);
 
 }
